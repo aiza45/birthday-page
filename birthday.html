@@ -1,0 +1,653 @@
+<!doctype html>
+<html lang="en">
+<head>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox=''%3E%3Ctext y='.9em' font-size='90'%3E🖤%3C/text%3E%3C/svg%3E">
+
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>NNETEEN</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+  :root{
+    --bg:#080808;
+    --panel:#0f1113;
+    --muted:#9aa3ac;
+    --accent1:#6ee7b7;
+    --accent2:#7c3aed;
+    --line: linear-gradient(180deg, rgba(110,231,183,1), rgba(124,58,237,1));
+    --card-radius:16px;
+    --max-w:980px;
+  }
+
+  *{box-sizing:border-box}
+  html,body{height:100%; margin:0; font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;}
+  body{
+    background: radial-gradient(1200px 600px at 10% 10%, rgba(124,58,237,0.06), transparent 8%),
+                radial-gradient(1000px 500px at 90% 90%, rgba(110,231,183,0.03), transparent 8%),
+                var(--bg);
+    color:#e6eef8;
+    -webkit-font-smoothing:antialiased;
+    padding:36px 20px 80px;
+    display:flex;
+    justify-content:center;
+  }
+
+  .wrap{
+    width:100%;
+    max-width:var(--max-w);
+  }
+
+  header{
+    text-align:center;
+    margin-bottom:36px;
+    position:sticky;
+    top:18px;
+    z-index:40;
+    background:transparent;
+    padding:6px 0;
+  }
+  header h1{
+    margin:0;
+    font-size:28px;
+    letter-spacing:-0.6px;
+    color: #fff;
+    background: linear-gradient(90deg,var(--accent1),var(--accent2));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  header p{
+    margin:6px 0 0;
+    color:var(--muted);
+    font-size:14px;
+  }
+  .grid-item video {
+  width:100%;
+  height:100%;
+  object-fit:cover; /* or 'contain' if you want full video visible */
+  border-radius:14px;
+  background:rgba(255,255,255,0.05);
+  display:block;
+}
+
+
+  /* timeline container */
+  .timeline {
+    position:relative;
+    padding:40px 0;
+  }
+
+  /* center vertical line */
+  .timeline::before{
+    content:"";
+    position:absolute;
+    left:50%;
+    transform:translateX(-50%);
+    width:6px;
+    top:0;
+    bottom:0;
+    border-radius:6px;
+    background: linear-gradient(180deg, rgba(110,231,183,0.9), rgba(124,58,237,0.9));
+    box-shadow:0 6px 30px rgba(0,0,0,0.6), inset 0 0 18px rgba(255,255,255,0.02);
+  }
+
+  .item {
+    position:relative;
+    width:50%;
+    padding:18px 24px;
+    display:block;
+  }
+
+  .item.left { left:0; text-align:right; }
+  .item.right { left:50%; text-align:left; }
+
+  /* timeline dot */
+  .item .dot {
+    position:absolute;
+    top:28px;
+    width:22px;
+    height:22px;
+    border-radius:50%;
+    background:linear-gradient(90deg,var(--accent1),var(--accent2));
+    box-shadow:0 6px 18px rgba(0,0,0,0.6), 0 0 18px rgba(124,58,237,0.12);
+    border:3px solid rgba(255,255,255,0.06);
+  }
+  .item.left .dot { right:-11px; }
+  .item.right .dot { left:-11px; }
+
+  .card {
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    border:1px solid rgba(255,255,255,0.04);
+    padding:18px;
+    border-radius:var(--card-radius);
+    box-shadow: 0 10px 30px rgba(1,2,6,0.6);
+    transition: transform .45s cubic-bezier(.2,.9,.2,1), opacity .45s ease, filter .45s ease;
+    opacity:0;
+    transform: translateY(16px) scale(.995);
+    filter: blur(6px);
+  }
+
+  .card.visible {
+    opacity:1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+
+  .card .meta {
+    display:flex;
+    gap:12px;
+    align-items:center;
+    margin-bottom:8px;
+  }
+  .date {
+    background:rgba(255,255,255,0.03);
+    color:#fff;
+    padding:8px 10px;
+    font-weight:700;
+    border-radius:10px;
+    font-size:13px;
+    letter-spacing:0.2px;
+  }
+  .place {
+    color:var(--muted);
+    font-size:13px;
+  }
+
+  .card h3{
+    margin:8px 0 6px;
+    font-size:18px;
+    color: #fff;
+  }
+  .card p{
+    margin:8px 0;
+    color:var(--muted);
+    font-size:15px;
+    white-space:pre-line;
+  }
+
+  /* small image placeholder */
+  .thumb{
+    width:100%;
+    max-height:220px;
+    border-radius:10px;
+    object-fit:cover;
+    margin-top:12px;
+    display:block;
+    border:1px solid rgba(255,255,255,0.03);
+  }
+
+  /* accent ribbon for the year/marker */
+  .ribbon{
+    position:absolute;
+    left:50%;
+    transform:translateX(-50%);
+    top:-18px;
+    background:transparent;
+    color:var(--muted);
+    font-weight:700;
+    font-size:13px;
+    padding:6px 12px;
+    border-radius:999px;
+  }
+
+  /* design tweaks for left/right text alignment */
+  .item.left .card { margin-right:36px; }
+  .item.right .card { margin-left:36px; }
+
+  /* responsive */
+  @media (max-width:900px){
+    .item { width:100%; left:0 !important; text-align:left !important; padding-left:64px; padding-right:20px; }
+    .timeline::before { left:32px; }
+    .item .dot { left:18px; right:auto; }
+    .item.left .card, .item.right .card { margin:0 0 30px 0; }
+    .ribbon{ left:28px; transform:none; top:-26px; }
+  }
+
+/* Gallery Section */
+.gallery{
+  margin:100px auto 60px;
+  max-width:1000px;
+}
+.gallery h2{
+  text-align:center;
+  font-size:2rem;
+  margin-bottom:40px;
+  background:linear-gradient(90deg,var(--accent1),var(--accent2));
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+  grid-auto-rows:200px;
+  grid-gap:16px;
+}
+.grid-item{
+  position:relative;
+  overflow:hidden;
+  border-radius:14px;
+  box-shadow:0 0 25px rgba(0,0,0,0.5);
+  transition:transform .4s ease, box-shadow .4s ease;
+}
+.grid-item img{
+  width:100%;
+  height:100%;
+  object-fit:contain;   /* ensures the full image fits in view */
+  background:rgba(255,255,255,0.05);  /* soft backdrop for transparent or non-square images */
+  transition:transform .4s ease;
+}
+
+.grid-item:hover{
+  transform:scale(1.05);
+  box-shadow:0 0 35px rgba(124,58,237,0.4);
+}
+.grid-item:hover img{transform:scale(1.1);}
+.caption{
+  position:absolute;
+  bottom:6px;
+  left:0;right:0;
+  text-align:center;
+  font-size:14px;
+  color:#fff;
+  background:rgba(0,0,0,0.45);
+  padding:6px 0;
+  backdrop-filter:blur(4px);
+  letter-spacing:1px;
+}
+
+/* larger & smaller variations */
+.grid-item:nth-child(2n){grid-row:span 2;}
+.grid-item:nth-child(3n){grid-column:span 2;}
+  /* final big birthday card */
+  .final {
+    margin:48px auto 0;
+    text-align:center;
+    padding:36px;
+    border-radius:18px;
+    background: linear-gradient(180deg, rgba(124,58,237,0.08), rgba(14,23,28,0.4));
+    border:1px solid rgba(255,255,255,0.03);
+    max-width:820px;
+    box-shadow:0 20px 50px rgba(2,6,10,0.8);
+  }
+  .final h2 {
+    font-size:36px;
+    margin:6px 0 8px;
+    color:transparent;
+    background: linear-gradient(90deg,var(--accent1),var(--accent2));
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+    text-shadow: 0 6px 18px rgba(0,0,0,0.6);
+  }
+  .final p { color:var(--muted); font-size:16px; margin:8px 0 0; white-space:pre-line; }
+
+  /* small helpers */
+  .muted { color:var(--muted); font-size:13px; }
+  .small { font-size:13px; color:var(--muted); margin-top:6px; }
+
+</style>
+
+</head>
+<body>
+  <div class="wrap">
+<header>
+  <h1>19th Birthday?! The Only Reason I’m Wishing Is Because I Type 71106 Nineteen Times a Day</h1>
+
+  <p>To be honest, I’m not really in the mood to wish you — but courtesy, you know. No need to acknowledge it.</p>
+
+  <p>
+    It’s pointless to recall everything, but this is just plain text — because I see that university every day, 
+    so why should I keep it all to myself? Really sorry if reading this brings nostalgia or any kind of discomfort...
+    Do I care? No. So, whatever.
+  </p>
+
+  <p>
+    Remember when you texted “your paras”? I decided to never send you any text. 
+    But I still like wasting words that make no sense to anyone — because, honestly, silence from people 
+    sometimes makes the most sense, right? If you get bothered, then same.
+  </p>
+</header>
+
+         
+<main class="timeline" aria-live="polite">
+  <div class="ribbon">
+     2025
+     </div>
+    <br>
+
+  <!-- 1 -->
+  <article class="item left">
+    <span class="dot"></span>
+    <div class="card">
+      <div class="meta"><div class="date">23 Apr 2025 10:30 AM
+
+      </div><div class="place muted">
+
+      </div></div>
+      <h3>COAL MID</h3>
+      <p>First meetup Badminton, Cafe, Hanger </p>
+    </div>
+  </article>
+
+  <!-- 2 -->
+  <article class="item right">
+    <span class="dot"></span>
+    <div class="card">
+      <div class="meta"><div class="date">22 May 2025  11:15 AM
+      </div><div class="place muted"></div></div>
+      <h3>Cake</h3>
+      <p>Y, F, R — met your group; "not existing na wo na hum na tm na me".</p>
+    </div>
+  </article>
+
+  <!-- 3 -->
+  <article class="item left">
+    <span class="dot"></span>
+    <div class="card">
+      <div class="meta"><div class="date">23 May 2025  9 AM</div><div class="place muted"></div></div>
+      <h3>Cafe</h3>
+      <p>Chai & roll & chai with Sooper at “that table”. Messy hair, black tee — yapping for 1 hour.</p>
+    </div>
+  </article>
+
+  <!-- 4 -->
+  <article class="item right">
+    <span class="dot"></span>
+    <div class="card">
+      <div class="meta"><div class="date">29 May 2025 10:30 AM</div><div class="place muted"></div></div>
+      <h3>Notes and laughs</h3>
+      <p>Searched in hanger found you in café. Studying, laughed, showed notes(LGBTQ), learnt “EASA”, Instagram reels apny ap ko hi bhj dety
+        Asked for Insta (dramatic moment).</p>
+    </div>
+  </article>
+
+  <!-- 5 -->
+  <article class="item left">
+    <span class="dot"></span>
+    <div class="card">
+      <div class="meta"><div class="date">30 May 2025  10:56 AM</div><div class="place muted"></div></div>
+      <h3>Friday</h3>
+      <p>I called you Met halfway (you Block 7, me front lawn). 2-min Café stop. First time saw you in black shalwar kameez. Walked to exam hall — “Crossing the city is a big thing.”</p>
+    </div>
+  </article>
+
+  <!-- 6 -->
+  <article class="item right">
+    <span class="dot"></span>
+    <div class="card">
+      <div class="meta"><div class="date">2 Jun 2025  3:30 PM</div><div class="place muted"></div></div>
+      <h3>Block 7 Road</h3>
+      <p>After lab I said "I can’t see you man" → you came with blue umbrella. Walked to main gate; Zara pushed me & laughed. Aura ---</p>
+    </div>
+  </article>
+
+  <!-- 7 -->
+  <article class="item left">
+    <span class="dot"></span>
+    <div class="card">
+      <div class="meta"><div class="date">3 Jun 2025 11:30 AM</div><div class="place muted"></div></div>
+      <h3>Admin Block</h3>
+      <p>Too much walk - I go there often</p>
+    </div>
+  </article>
+
+  <!-- 8 -->
+  <article class="item right">
+    <span class="dot"></span>
+    <div class="card">
+      <div class="meta"><div class="date">4 Jun 2025 8:30 AM</div><div class="place muted"></div></div>
+      <h3>YOU WERE SLEEPING </h3>
+      <p>I called you (it was my role play) & you didn't come
+        you had to attend a conference & ur text:  “how can someone hurt a person like this,who apologizes to a non - living (dustbin).”</p>
+    </div>
+  </article>
+
+  <!-- 9 -->
+  <article class="item left">
+    <span class="dot"></span>
+    <div class="card">
+      <div class="meta"><div class="date">11 Jun 2025 8:30 AM
+
+      </div><div class="place muted"></div></div>
+      <h3>After eid holidays</h3>
+      <p>WYA-- Lower ground Democracy(Islamiat quiz) , black outfit, later you left with classmates.</p>
+    </div>
+  </article>
+
+  <!-- 10 -->
+  <article class="item right">
+    <span class="dot"></span>
+    <div class="card">
+      <div class="meta"><div class="date">12 Jun 2025 11:00 AM
+
+      </div><div class="place muted"></div></div>
+      <h3>that corner table in cafe</h3>
+      <p>The way you said I wont take this blue gel pen....</p>
+    </div>
+  </article>
+
+  <!-- 11 -->
+  <article class="item left">
+    <span class="dot"></span>
+    <div class="card">
+      <div class="meta"><div class="date">16 Jun 2025  8:15 AM</div><div class="place muted"></div></div>
+      <h3>Presentation</h3>
+      <p>5-minute meetup before Presentation I asked you to put prints in files skills issue
+           Then you left for airport.</p>
+    </div>
+  </article>
+
+  <!-- 12 -->
+  <article class="item right">
+    <span class="dot"></span>
+    <div class="card">
+      <div class="meta"><div class="date">17 Jun 2025 12:45 PM
+
+      </div><div class="place muted"></div></div>
+      <h3>Block 7 </h3>
+      <p> Something fell → "I can’t pick it for you but you would for me."
+
+        """AISAY ACHA THORI LGTA MENE block 7 BULAYA OR AB CAFE CHLA JAON (3 DOTS)""""
+
+      </p>
+    </div>
+  </article>
+
+  <!-- 13 -->
+  <article class="item left">
+    <span class="dot"></span>
+    <div class="card">
+      <div class="meta"><div class="date">18 Jun 2025 8:30-10:30 AM
+
+      </div><div class="place muted"></div></div>
+      <h3>Lower Ground , classrooms</h3>
+      <p>9% attendance sir </p>
+    </div>
+  </article>
+
+  <!-- 14 -->
+  <article class="item right">
+    <span class="dot"></span>
+    <div class="card">
+      <div class="meta"><div class="date">23 Jun 2025  8 AM </div><div class="place muted"></div></div>
+      <h3>Final Exam</h3>
+      <p>8:20 AM ground → lower ground → 2:30 blue sofas.</p>
+    </div>
+  </article>
+ <article class="item left">
+    <span class="dot"></span>
+    <div class="card">
+      <div class="meta"><div class="date">26 Jun 2025  10:30 AM</div><div class="place muted"></div></div>
+      <h3>Cafe </h3>      <p>English exam ... Green Gown  
+       </p>
+    </div>
+  </article>
+  <!-- 15 -->
+  <article class="item right">
+    <span class="dot"></span>
+    <div class="card">
+      <div class="meta"><div class="date">30 Jun 2025  8:30 AM</div><div class="place muted"></div></div>
+      <h3>Red fit </h3>
+      <p>I fell bcz of you obv
+    block 7 classrooms ur bloody Juniors & dumb me I
+  still press both elevator buttons </p>
+    </div>
+  </article>
+
+  <!-- 16 -->
+  <article class="item left">
+    <span class="dot"></span>
+    <div class="card">
+      <div class="meta"><div class="date">1 Jul 2025 8:15 AM & 11 AM
+
+      </div><div class="place muted"></div></div>
+      <h3>COAL FINAL</h3>
+      <p>Met before exam(block 6), after exam (Cafe same table),(block 7)Heard my name for first time & chaos .</p>
+    </div>
+  </article>
+
+  <!-- 17 -->
+  <article class="item right">
+    <span class="dot"></span>
+    <div class="card">
+      <div class="meta"><div class="date">18 Sep 2025 11:10 AM
+        
+      </div><div class="place muted"></div></div>
+      <h3>AIR University</h3>
+      <p>8-min meetup + 1-minute call </p>
+    </div>
+  </article>
+</main>
+
+
+      
+ 
+
+
+    <section class="final" aria-label="Birthday">
+      <h2>HAPPY BIRTHDAY HAYYAN</h2>
+      <p>Happy birthday 
+         </p>
+    </section>
+
+      <section class="gallery">
+    <h2> Gallery</h2>
+    <div class="grid">
+      <div class="grid-item"><img src="1.png" alt="Cafe"><div class="caption">
+        :)
+     
+      </div></div>
+
+      <div class="grid-item"> <video autoplay loop muted>
+        
+  <source src="27.mp4" type="video/mp4">
+</video>
+<div class="caption"> I have same umbrella
+      </div>
+
+     
+      </div>
+
+      <div class="grid-item"><img src="26.jpg" alt="Cafe"><div class="caption">
+     same
+      </div></div>
+
+      <div class="grid-item"><img src="25.jpg" alt="Cafe"><div class="caption">
+     Happy 19th
+      </div></div>
+
+
+      <div class="grid-item"><img src="24.jpg" alt="Cafe"><div class="caption">
+        I SEE ATH STUDENTS IN PARKING HR ROZ
+      </div></div>
+      <div class="grid-item"><img src="3.png" alt="Notes"><div class="caption">
+        
+            IDC
+
+
+               </div></div>
+      <div class="grid-item"><img src="4.png" alt="Exam"><div class="caption">
+        Fine
+        </div></div>
+      <div class="grid-item"><img src="5.png" alt="Presentation"><div class="caption">
+        I miss your voice
+        </div></div>
+      <div class="grid-item"><img src="6.png" alt="Eid"><div class="caption">
+        
+        </div></div>
+      <div class="grid-item"><img src="7.png" alt="Call"><div class="caption">
+
+      </div></div>
+      <div class="grid-item"><img src="8.png" alt="Seeoff"><div class="caption">
+         my friend got angry cuz....I am over actress but i stopped su
+      </div></div>
+      <div class="grid-item"><img src="9.png" alt="University"><div class="caption">
+         
+      </div></div>
+      <div class="grid-item"><img src="10.png" alt="Cafe"><div class="caption">
+        I wanna listen these vms..
+      </div></div>
+      <div class="grid-item"><img src="11.png" alt="Umbrella"><div class="caption">
+        sad
+        </div></div>
+      <div class="grid-item"><img src="13.png" alt="Notes"><div class="caption">
+         I dont like this weather
+      </div></div>
+      <div class="grid-item"><img src="12.png" alt="Exam"><div class="caption">
+            not true
+      </div></div>
+      <div class="grid-item"><img src="14.png" alt="Presentation"><div class="caption">
+         I saw the coffee bean here so It reminded me of your tiktok post but I couldn't take a pic...
+      </div></div>
+      
+      <div class="grid-item"><img src="16.png" alt="Call"><div class="caption">
+              I took this on 18th sep 2025 funny experience
+      </div></div>
+      <div class="grid-item"><img src="17.png" alt="Seeoff"><div class="caption">
+             you never compensated (just saying) 
+              I waited alot for you and u left for airport
+      </div></div>
+
+      <div class="grid-item"><img src="23.jpg" alt="Cafe"><div class="caption">
+      TOO MUCH WALK
+      </div></div>
+
+      <div class="grid-item"><img src="22.jpg" alt="Cafe"><div class="caption">
+            730 daysSszs :)
+      </div></div>
+
+      <div class="grid-item"><img src="21.jpg" alt="Cafe"><div class="caption">
+             ........
+      </div></div>
+
+      
+      <div class="grid-item"><img src="18.png" alt="University"><div class="caption">
+               you always send ss (mini heartattacks)   
+                
+      </div></div>
+      <div class="grid-item"><img src="20.jpg" alt="Cafe"><div class="caption">
+               Okay.
+      </div></div>
+    </div>
+  </section>
+
+  </div>
+
+<script>
+  // Reveal on scroll using IntersectionObserver
+  (function(){
+    const cards = document.querySelectorAll('.card');
+    const obs = new IntersectionObserver((entries, observer) => {
+      entries.forEach(entry => {
+        if(entry.isIntersecting){
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 });
+
+    cards.forEach(c => obs.observe(c));
+  })();
+</script>
+</body>
+</html>
